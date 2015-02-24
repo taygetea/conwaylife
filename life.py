@@ -1,4 +1,4 @@
-def init(input):
+def init(input, *border):
     f = open(input, 'r')
     firstline = f.readline()
     if firstline.startswith("!Name: "):
@@ -7,10 +7,16 @@ def init(input):
 
     lines = f.readlines()
     array = []
+
+    longest = sorted([len(line)-1 for line in lines])
+    longest = longest[-1]
     for line in lines:
         line = [l for l in line if l in ".O"]
-        array.append(line)
-    array = array[1:]
+        if len(line) < longest:
+            line.extend('.'*(longest - len(line)))
+        if line[0] != '!':
+            array.append(line)
+
     return array
 
 
@@ -69,25 +75,26 @@ def update(board):
             neighbornum = neighbors(i, j, board)
             if board[i][j] == '.':
                 if neighbornum == 3:
-                    print "the space " + str(i) + " " + str(j) + " came alive"
+                    #print "the space " + str(i) + " " + str(j) + " came alive"
                     output[i].append('O')
                 else:
                     output[i].append('.')
             elif board[i][j] == 'O':
                 if neighbornum == 3 or neighbornum == 2:
-                    print "the space " + str(i) + " " + str(j) + " survived"
+                    #print "the space " + str(i) + " " + str(j) + " survived"
                     output[i].append('O')
                 elif neighbornum < 2 or neighbornum > 3:
-                    print "the space " + str(i) + " " + str(j) + " died"
+                    #print "the space " + str(i) + " " + str(j) + " died"
                     output[i].append('.')
     return output
 
+
 array = init("input.txt")
-cycles = 7
+cycles = 1
 for i in range(cycles):
     array = update(array)
 
-array = [x for x in array if x != []]
+array = [''.join(x) for x in array if x != []]
 f = open('output.txt', 'w')
 for item in array:
     f.write("%s\n" % item)
