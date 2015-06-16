@@ -1,5 +1,6 @@
 import curses
 import time
+import sys
 
 
 def load(input="input.txt"):
@@ -11,10 +12,14 @@ def load(input="input.txt"):
 
 
 def cleanboard(grid):
-    width = sorted([len(line) for line in grid])[-1]
+    width = max([len(line) for line in grid])
     for line in grid:
-        if len(line) < width:
-            line.extend('.'*(width - len(line)))
+        for index, elem in enumerate(line):
+            if elem not in ".O":
+                line[index] = "."
+        line.extend(['.' for i in range(width - len(line))])
+
+
 def rebuild(grid):
     boardOut = []
     ylen = len(grid)
@@ -48,11 +53,12 @@ def rebuild(grid):
 
 
 def main(stdscr, delay=0.033):
-    grid = load()
+    grid = load(sys.argv[1])
     while True:
         grid = rebuild(grid)
         for index, elem in enumerate(grid):
             stdscr.addstr(index, 0, ''.join(elem))
         time.sleep(delay)
         stdscr.refresh()
-curses.wrapper(main)
+if __name__ == "__main__":
+    curses.wrapper(main)
