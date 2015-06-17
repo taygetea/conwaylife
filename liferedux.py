@@ -11,13 +11,14 @@ def load(input="input.txt"):
     return out
 
 
-def cleanboard(grid):
-    width = max([len(line) for line in grid])
-    for line in grid:
+def cleanboard(board):
+    width = max([len(line) for line in board])
+    for line in board:
         for index, elem in enumerate(line):
             if elem not in ".O":
                 line[index] = "."
         line.extend(['.' for i in range(width - len(line))])
+    return board
 
 
 def rebuild(grid):
@@ -53,7 +54,9 @@ def rebuild(grid):
 
 
 def main(stdscr, delay=0.033):
-    grid = load(sys.argv[1])
+    grid = cleanboard(load(sys.argv[1]))
+    for l in grid:
+        print ''.join(l)
     while True:
         grid = rebuild(grid)
         for index, elem in enumerate(grid):
